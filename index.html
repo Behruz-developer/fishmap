@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover" />
+  <title>FishMap — Baliq tutish joylari</title>
+  <meta name="description" content="O'zbekistondagi baliq tutish joylarini toping, ulashing va baholang. Ob-havo, jihoz va ov qo'llanmasi bilan." />
+  <meta name="theme-color" content="#124F68" />
+
+  <!-- Ijtimoiy tarmoqlar uchun -->
+  <meta property="og:title" content="FishMap — Baliq tutish joylari" />
+  <meta property="og:description" content="Baliq tutish joylarini toping, qo'llanmalar o'qing va ulashing" />
+  <meta property="og:type" content="website" />
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="FishMap" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ── LOGIN SCREEN ── -->
+  <div id="loginScreen" class="login-screen">
+    <div class="login-card">
+      <div class="login-logo">🎣</div>
+      <h1 class="login-title">Fish<span>Map</span></h1>
+      <p class="login-subtitle">Baliq tutish joylarini toping, qo'llanmalar o'qing va ulashing</p>
+
+      <div class="login-features">
+        <div class="feat-item"><span>📍</span> Yaqin joylarni xaritada ko'ring</div>
+        <div class="feat-item"><span>📖</span> Baliq turlari va ovlash usullari</div>
+        <div class="feat-item"><span>🏪</span> Yaqin do'konlarni toping</div>
+        <div class="feat-item"><span>⭐</span> Joy qo'shing va baholang</div>
+      </div>
+
+      <button class="btn-google" id="btnGoogleLogin">
+        <img src="https://www.google.com/favicon.ico" width="20" height="20" alt="Google" />
+        Google orqali kirish
+      </button>
+
+      <p class="login-note">Kirish orqali siz <a href="#">shartlar</a> ga rozilik bildirasiz</p>
+    </div>
+  </div>
+
+  <!-- ── MAIN APP ── -->
+  <div id="mainApp" class="app hidden">
+
+    <!-- HEADER -->
+    <header class="header">
+      <div class="logo">
+        <span class="logo-icon">🎣</span>
+        Fish<span>Map</span>
+      </div>
+      <div class="header-actions">
+        <!-- PWA install button (hidden by default, shown when installable) -->
+        <button class="btn-icon hidden" id="btnInstallPWA" title="Ilovani o'rnatish" aria-label="Ilovani o'rnatish">⬇️</button>
+        <div class="user-avatar" id="userAvatar" title="Profil" role="button" tabindex="0" aria-label="Profil"></div>
+      </div>
+    </header>
+
+    <!-- TAB CONTENT WRAPPER -->
+    <div class="tab-content">
+
+      <!-- ══════════ TAB: XARITA ══════════ -->
+      <div class="tab-pane active" id="tab-map" role="tabpanel" aria-label="Xarita">
+
+        <!-- SEARCH -->
+        <div class="search-wrap">
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="search" id="searchInput" aria-label="Qidirish" placeholder="Joy yoki baliq turi qidiring..." />
+            <button class="search-clear hidden" id="searchClear" aria-label="Qidiruvni tozalash">✕</button>
+          </div>
+        </div>
+
+        <!-- FILTERS -->
+        <div class="filter-wrap" id="filterWrap">
+          <button class="chip active" data-filter="all">🌊 Barchasi</button>
+          <button class="chip" data-filter="near">📍 Yaqin</button>
+          <button class="chip" data-filter="free">🆓 Bepul</button>
+          <button class="chip" data-filter="paid">💰 Pullik</button>
+          <button class="chip" data-filter="sazan">🐟 Sazan</button>
+          <button class="chip" data-filter="zander">🐠 Zander</button>
+          <button class="chip" data-filter="forel">🎣 Forel</button>
+          <button class="chip" data-filter="top">⭐ Top joylar</button>
+          <button class="chip chip-store" data-filter="stores"><svg class="cart-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.1 10.1a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 1.9-1.4L21 8H6.1"/><circle cx="10" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg>Do'konlar</button>
+        </div>
+
+        <!-- MAP -->
+        <div class="map-container">
+          <div id="map"></div>
+
+          <div class="map-legend" aria-label="Xaritadagi belgilar izohi">
+            <span><i class="legend-dot legend-free"></i>Bepul</span>
+            <span><i class="legend-dot legend-paid"></i>Pullik</span>
+            <span><i class="legend-dot legend-hot"></i>Mashhur</span>
+            <span><i class="legend-store-icon"><svg class="cart-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.1 10.1a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 1.9-1.4L21 8H6.1"/><circle cx="10" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg></i>Do'kon</span>
+          </div>
+
+          <!-- Loading overlay -->
+          <div class="map-loading" id="mapLoading">
+            <div class="loading-spinner"></div>
+            <p>Xarita yuklanmoqda...</p>
+          </div>
+
+          <!-- Xarita amallari -->
+          <!-- FAB: Joy qo'shish — ENDI FAQAT ADMIN uchun (app.js'da admin tekshiruvida ko'rsatiladi) -->
+          <!-- ⚠️ ESKI FUNKSIYA (hamma user joy qo'shishi) — keyinchalik qayta yoqish uchun saqlanadi:
+          <button class="fab fab-add" id="btnAddSpot" title="Yangi joy qo'shish" aria-label="Yangi joy qo'shish">
+            <span aria-hidden="true">📍</span> Joy qo'shish
+          </button>
+          -->
+          <!-- ⚠️ VAQTINCHALIK O'CHIRILDI: xaritadagi "Joy qo'shish" / "Do'kon qo'shish" FAB tugmalari.
+             Endi qo'shish FAQAT Admin panel orqali. Qayta yoqish uchun quyidagi blokni izohdan chiqaring
+             va app.js'dagi "Admin nazorati" hamda "Admin uchun joy qo'shish" bloklarini ham tiklang.
+          <button class="fab fab-add" id="btnAddSpot" title="Yangi joy qo'shish (admin)" aria-label="Yangi joy qo'shish">
+            <span aria-hidden="true">📍</span> Joy qo'shish
+          </button>
+          <button class="fab fab-store" id="btnAddStore" title="Do'kon qo'shish" aria-label="Do'kon qo'shish">
+            <svg class="cart-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.1 10.1a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 1.9-1.4L21 8H6.1"/><circle cx="10" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg> Do'kon qo'shish
+          </button>
+          -->
+          <button class="fab" id="fabLocation" title="Mening joylashuvim" aria-label="Mening joylashuvim">📍</button>
+        </div>
+
+        <!-- BOTTOM PANEL -->
+        <div class="bottom-panel">
+          <div class="panel-header">
+            <span class="panel-title">Yaqin joylar</span>
+            <div class="panel-actions">
+              <span class="panel-count" id="spotCount">0 ta joy</span>
+              <div class="spot-layout-switch" role="group" aria-label="Joylar ko'rinishi">
+                <button class="spot-layout-btn active" type="button" data-spot-layout="cards" aria-pressed="true">▦ Kartalar</button>
+                <button class="spot-layout-btn" type="button" data-spot-layout="list" aria-pressed="false">☷ Ro'yxat</button>
+              </div>
+            </div>
+          </div>
+          <div class="spots-row" id="spotsRow"></div>
+        </div>
+
+      </div><!-- /tab-map -->
+
+      <!-- ══════════ TAB: QO'LLANMA ══════════ -->
+      <div class="tab-pane hidden" id="tab-guide" role="tabpanel" aria-label="Baliq ovlash qo'llanmasi">
+
+        <!-- Ro'yxat ko'rinishi -->
+        <div id="guideListView" class="guide-list-view">
+          <div class="guide-header">
+            <div class="guide-search-box">
+              <span>🔍</span>
+              <input type="search" id="guideSearch" placeholder="Baliq turi qidiring..." aria-label="Baliq turi qidirish" />
+            </div>
+          </div>
+
+          <div class="guide-filters" id="guideFilters">
+            <button class="guide-chip active" data-guide-filter="all">🌊 Barchasi</button>
+            <button class="guide-chip" data-guide-filter="lake">🏞️ Ko'l</button>
+            <button class="guide-chip" data-guide-filter="river">🌊 Daryo</button>
+            <button class="guide-chip" data-guide-filter="pond">🌿 Hovuz</button>
+            <button class="guide-chip" data-guide-filter="beginner">🟢 Oson</button>
+            <button class="guide-chip" data-guide-filter="advanced">🔴 Murakkab</button>
+          </div>
+
+          <div class="guide-grid" id="guideGrid">
+            <!-- JS tomonidan to'ldiriladi -->
+          </div>
+        </div>
+
+        <!-- Detail sahifa (alohida ko'rinish, modal emas) -->
+        <div id="guideDetailPage" class="guide-detail-page hidden">
+          <div class="guide-detail-topbar">
+            <button class="guide-back-btn" id="guideBackBtn" aria-label="Orqaga">← Orqaga</button>
+            <span class="guide-detail-topbar-title">Qo'llanma</span>
+          </div>
+          <div class="guide-detail-content" id="guideDetailBody">
+            <!-- JS tomonidan to'ldiriladi -->
+          </div>
+        </div>
+
+      </div><!-- /tab-guide -->
+
+      <!-- ══════════ TAB: ADMIN (faqat adminlar uchun) ══════════ -->
+      <div class="tab-pane hidden" id="tab-admin" role="tabpanel" aria-label="Admin panel">
+        <div class="admin-page">
+          <div class="admin-header">
+            <div class="admin-header-title">🛠️ Admin panel</div>
+            <div class="admin-header-sub">Qo'llanma qo'shish va tahrirlash</div>
+          </div>
+
+          <div class="admin-tabs" role="group" aria-label="Admin bo'limlari">
+            <button class="admin-tab-btn active" data-admin-tab="new">➕ Yangi qo'llanma</button>
+            <button class="admin-tab-btn" data-admin-tab="list">📋 Mavjudlar</button>
+            <button class="admin-tab-btn" data-admin-tab="spots">📍 Joylar &amp; do'konlar</button>
+          </div>
+
+          <!-- Yangi qo'llanma formasi -->
+          <div class="admin-section" id="adminTabNew">
+            <div class="admin-form">
+              <div class="admin-form-row">
+                <div class="form-group">
+                  <label>Nomi *</label>
+                  <input type="text" id="adminFishName" placeholder="Masalan: Sudak" />
+                </div>
+                <div class="form-group small">
+                  <label>Emoji</label>
+                  <input type="text" id="adminFishEmoji" placeholder="🐟" maxlength="4" />
+                </div>
+              </div>
+              <div class="admin-form-row">
+                <div class="form-group">
+                  <label>Lotin nomi</label>
+                  <input type="text" id="adminFishSci" placeholder="Sander lucioperca" />
+                </div>
+                <div class="form-group small">
+                  <label>Daraja</label>
+                  <select id="adminFishDifficulty">
+                    <option value="beginner">🟢 Oson</option>
+                    <option value="intermediate">🟡 O'rta</option>
+                    <option value="advanced">🔴 Murakkab</option>
+                  </select>
+                </div>
+              </div>
+              <div class="admin-form-row">
+                <div class="form-group">
+                  <label>O'rtacha vazn</label>
+                  <input type="text" id="adminFishAvgWeight" placeholder="0.5–3 kg" />
+                </div>
+                <div class="form-group">
+                  <label>Max vazn</label>
+                  <input type="text" id="adminFishMaxWeight" placeholder="15 kg" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Tavsif</label>
+                <textarea id="adminFishDesc" rows="3" placeholder="Baliq haqida qisqacha..."></textarea>
+              </div>
+              <div class="form-group">
+                <label>Yashash muhiti</label>
+                <input type="text" id="adminFishHabitat" placeholder="Qayerda uchraydi..." />
+              </div>
+              <div class="form-group">
+                <label>YouTube video havolalari (har satrga bittasi)</label>
+                <textarea id="adminFishVideos" rows="2" placeholder="https://youtube.com/watch?v=..."></textarea>
+              </div>
+              <p class="admin-form-note">ℹ️ Qo'shimcha bo'limlar (usullar, jihoz, xo'rak) keyingi versiyada qo'shiladi. Hozircha asosiy ma'lumot va video yetarli.</p>
+              <button class="btn-admin-save" id="adminSaveGuide">✅ Supabase'ga saqlash</button>
+            </div>
+          </div>
+
+          <!-- Mavjud qo'llanmalar ro'yxati -->
+          <div class="admin-section hidden" id="adminTabList">
+            <div class="admin-list" id="adminGuidesList">
+              <div class="stores-loading">
+                <div class="loading-spinner"></div>
+                <p>Yuklanmoqda...</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Joylar va do'konlar boshqaruvi (faqat admin) -->
+          <div class="admin-section hidden" id="adminTabSpots">
+            <div class="admin-spots-actions" style="display:flex; gap:10px; margin-bottom:12px; flex-wrap:wrap;">
+              <button class="btn-admin-save" id="adminAddSpotBtn" style="flex:1;">📍 Joy qo'shish</button>
+              <button class="btn-admin-save" id="adminAddStoreBtn" style="flex:1;">🏪 Do'kon qo'shish</button>
+            </div>
+            <div class="admin-list" id="adminSpotsList">
+              <div class="stores-loading">
+                <div class="loading-spinner"></div>
+                <p>Yuklanmoqda...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div><!-- /tab-admin -->
+
+      <!-- ══════════ TAB: DO'KONLAR ══════════ -->
+      <div class="tab-pane hidden" id="tab-stores" role="tabpanel" aria-label="Do'konlar">
+
+        <div class="stores-header">
+          <div class="stores-search-box">
+            <span>🔍</span>
+            <input type="search" id="storesSearch" placeholder="Do'kon nomi yoki manzil..." aria-label="Do'kon qidirish" />
+          </div>
+          <div class="stores-sort-row">
+            <span class="stores-count" id="storesCount">Yuklanmoqda...</span>
+            <button class="stores-sort-btn active" data-sort="distance">📍 Yaqinlik</button>
+            <button class="stores-sort-btn" data-sort="name">🔤 Nomi</button>
+          </div>
+        </div>
+
+        <div class="stores-list" id="storesList">
+          <div class="stores-loading">
+            <div class="loading-spinner"></div>
+            <p>Do'konlar yuklanmoqda...</p>
+          </div>
+        </div>
+
+      </div><!-- /tab-stores -->
+
+      <!-- ══════════ TAB: PROFIL ══════════ -->
+      <div class="tab-pane hidden" id="tab-profile" role="tabpanel" aria-label="Profil">
+
+        <div class="profile-page">
+
+          <div class="profile-hero">
+            <div class="profile-avatar-lg" id="profileAvatarLg"></div>
+            <div class="profile-name" id="profileName">—</div>
+            <div class="profile-email" id="profileEmail">—</div>
+          </div>
+
+          <div class="profile-stats" id="profileStats">
+            <div class="profile-stat-box">
+              <div class="profile-stat-val" id="statSpots">—</div>
+              <div class="profile-stat-lbl">Qo'shgan joylar</div>
+            </div>
+            <div class="profile-stat-box">
+              <div class="profile-stat-val" id="statStores">—</div>
+              <div class="profile-stat-lbl">Do'konlar</div>
+            </div>
+            <div class="profile-stat-box">
+              <div class="profile-stat-val">🎣</div>
+              <div class="profile-stat-lbl">Baliqchi</div>
+            </div>
+          </div>
+
+          <div class="profile-section">
+            <div class="profile-section-title">Ilova</div>
+            <div class="profile-menu">
+              <button class="profile-menu-item hidden" id="btnInstallPWA2">
+                <span class="pmenu-icon">📲</span>
+                <div class="pmenu-text">
+                  <div class="pmenu-label">Ilovani o'rnatish</div>
+                  <div class="pmenu-sub">Telefon ekraniga qo'shish</div>
+                </div>
+                <span class="pmenu-arrow">›</span>
+              </button>
+              <button class="profile-menu-item" id="btnShareApp">
+                <span class="pmenu-icon">🔗</span>
+                <div class="pmenu-text">
+                  <div class="pmenu-label">Ilovani ulashish</div>
+                  <div class="pmenu-sub">Do'stlaringizga yuboring</div>
+                </div>
+                <span class="pmenu-arrow">›</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="profile-section">
+            <div class="profile-section-title">Ma'lumot</div>
+            <div class="profile-menu">
+              <div class="profile-menu-item no-arrow">
+                <span class="pmenu-icon">🗺️</span>
+                <div class="pmenu-text">
+                  <div class="pmenu-label">Versiya</div>
+                  <div class="pmenu-sub">FishMap 2.0 — PWA</div>
+                </div>
+              </div>
+              <div class="profile-menu-item no-arrow">
+                <span class="pmenu-icon">🌐</span>
+                <div class="pmenu-text">
+                  <div class="pmenu-label">Xarita</div>
+                  <div class="pmenu-sub">Yandex Maps + Open-Meteo ob-havo</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="profile-section">
+            <button class="profile-menu-item admin-btn hidden" id="btnOpenAdmin">
+              <span class="pmenu-icon">🛠️</span>
+              <div class="pmenu-text">
+                <div class="pmenu-label">Admin panel</div>
+                <div class="pmenu-sub">Qo'llanmalar boshqaruvi</div>
+              </div>
+              <span class="pmenu-arrow">›</span>
+            </button>
+            <button class="profile-menu-item btn-signout" id="btnSignOut">
+              <span class="pmenu-icon">🚪</span>
+              <div class="pmenu-text">Chiqish</div>
+            </button>
+          </div>
+
+        </div>
+      </div><!-- /tab-profile -->
+
+    </div><!-- /tab-content -->
+
+    <!-- BOTTOM NAVIGATION -->
+    <nav class="bottom-nav" role="navigation" aria-label="Asosiy navigatsiya">
+      <button class="nav-item active" data-tab="map" aria-label="Xarita" aria-pressed="true">
+        <span class="nav-icon">🗺️</span>
+        <span class="nav-label">Xarita</span>
+      </button>
+      <button class="nav-item" data-view-mode="spots" aria-label="Joylar" aria-pressed="false">
+        <span class="nav-icon">📍</span>
+        <span class="nav-label">Joylar</span>
+      </button>
+      <button class="nav-item" data-tab="guide" aria-label="Qo'llanma" aria-pressed="false">
+        <span class="nav-icon">📖</span>
+        <span class="nav-label">Qo'llanma</span>
+      </button>
+      <button class="nav-item" data-tab="stores" aria-label="Do'konlar" aria-pressed="false">
+        <span class="nav-icon">🏪</span>
+        <span class="nav-label">Do'konlar</span>
+      </button>
+      <!-- Admin — boshqa 4 ta tugma bilan birga (faqat adminlarga ko'rinadi, Admin.init boshqaradi) -->
+      <button class="nav-item hidden" data-tab="admin" aria-label="Admin" aria-pressed="false">
+        <span class="nav-icon">🛠️</span>
+        <span class="nav-label">Admin</span>
+      </button>
+      <!-- Profil — eng pastki qismda -->
+      <button class="nav-item nav-item-profile" data-tab="profile" aria-label="Profil" aria-pressed="false">
+        <span class="nav-icon">👤</span>
+        <span class="nav-label">Profil</span>
+      </button>
+    </nav>
+
+  </div><!-- /mainApp -->
+
+  <!-- ── ADD SPOT MODAL ── -->
+  <div class="modal-overlay hidden" id="addSpotModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="addModalTitle">📍 Yangi joy qo'shish</h2>
+        <button class="modal-close" id="closeAddModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Joy nomi *</label>
+          <input type="text" id="newName" placeholder="Masalan: Charvak ko'li" />
+        </div>
+        <div class="form-group spot-only-field">
+          <label>Tur *</label>
+          <select id="newType">
+            <option value="Ko'l">🏞️ Ko'l</option>
+            <option value="Daryo">🌊 Daryo</option>
+            <option value="Hovuz">🌿 Hovuz</option>
+            <option value="Suv ombori">💧 Suv ombori</option>
+            <option value="Baliq ovi do'koni">Baliq ovi do'koni</option>
+          </select>
+        </div>
+        <div class="form-group spot-only-field">
+          <label>Baliq turlari (vergul bilan)</label>
+          <input type="text" id="newFish" placeholder="Sazan, Karp, Forel" />
+        </div>
+        <div class="form-group">
+          <label>Tavsif</label>
+          <textarea id="newDesc" rows="3" placeholder="Bu joy haqida qisqacha..."></textarea>
+        </div>
+        <div class="form-row spot-only-field">
+          <div class="form-group half">
+            <label>Chuqurlik</label>
+            <input type="text" id="newDepth" placeholder="~5 m" />
+          </div>
+          <div class="form-group half">
+            <label>Kirish</label>
+            <select id="newPaid">
+              <option value="false">🆓 Bepul</option>
+              <option value="true">💰 Pullik</option>
+            </select>
+          </div>
+        </div>
+        <p class="form-note">📌 Xaritada joylashuv: <span id="selectedCoords">Hali tanlanmagan</span></p>
+        <button type="button" class="btn-pick-location" id="btnPickLocation">🗺️ Xaritadan joy tanlash</button>
+        <p class="form-hint">Tugmani bosib, xaritada kerakli joyga bosing</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" id="cancelAddSpot">Bekor qilish</button>
+        <button class="btn-save" id="saveSpot">✅ Saqlash</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── DETAIL POPUP ── -->
+  <div class="popup-overlay hidden" id="popupOverlay">
+    <div class="popup" id="popup">
+      <div class="popup-handle"></div>
+      <div class="popup-emoji" id="popupEmoji">🌊</div>
+      <div class="popup-body">
+        <div class="popup-name" id="popupName">—</div>
+        <div class="popup-badges" id="popupBadges"></div>
+        <div class="stat-row" id="popupStats"></div>
+        <div class="popup-desc" id="popupDesc">—</div>
+        <div class="weather-card" id="popupWeather"></div>
+        <div class="fish-list" id="popupFish"></div>
+        <div class="popup-author" id="popupAuthor"></div>
+        <div class="popup-actions">
+          <button class="btn-primary" id="popupNav">🗺️ Yo'l ko'rsat</button>
+          <button class="btn-secondary" id="popupClose">✕</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── FISH GUIDE DETAIL MODAL ── -->
+  <div class="modal-overlay hidden" id="guideModal">
+    <div class="modal guide-modal">
+      <div class="modal-header">
+        <h2 id="guideModalTitle">🐟 Baliq</h2>
+        <button class="modal-close" id="closeGuideModal">✕</button>
+      </div>
+      <div class="modal-body" id="guideModalBody">
+        <!-- JS tomonidan to'ldiriladi -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TOAST ── -->
+  <div class="toast hidden" id="toast"></div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/weather.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/spots.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/guides.js"></script>
+  <script src="js/stores-tab.js"></script>
+  <script src="js/admin.js"></script>
+  <script src="js/profile.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

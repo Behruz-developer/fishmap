@@ -1,0 +1,57 @@
+{
+  "name": "FishMap — Baliq tutish joylari",
+  "short_name": "FishMap",
+  "description": "O'zbekistondagi baliq tutish joylarini toping, ulashing va baholang",
+  "lang": "uz",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait",
+  "background_color": "#124F68",
+  "theme_color": "#124F68",
+  "categories": ["travel", "sports", "navigation"],
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Yangi joy qo'shish",
+      "short_name": "Joy qo'shish",
+      "url": "./index.html?action=add"
+    },
+    {
+      "name": "Baliq ovlash qo'llanmasi",
+      "short_name": "Qo'llanma",
+      "url": "./index.html#guide"
+    },
+    {
+      "name": "Jihoz do'konlari",
+      "short_name": "Do'konlar",
+      "url": "./index.html#stores"
+    }
+  ]
+}
