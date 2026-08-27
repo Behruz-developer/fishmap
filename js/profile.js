@@ -11,13 +11,14 @@ const Profile = (() => {
     e.preventDefault();
     _deferredInstallPrompt = e;
     // Header va profil sahifasidagi install tugmalarini ko'rsatish
-    document.getElementById('btnInstallPWA')?.classList.remove('hidden');
+    // ⚠️ btnInstallPWA (eski header tugmasi) o'chirilgan — faqat btnInstallPWA2 (Profil):
+    // document.getElementById('btnInstallPWA')?.classList.remove('hidden');
     document.getElementById('btnInstallPWA2')?.classList.remove('hidden');
   });
 
   window.addEventListener('appinstalled', () => {
     _deferredInstallPrompt = null;
-    document.getElementById('btnInstallPWA')?.classList.add('hidden');
+    // document.getElementById('btnInstallPWA')?.classList.add('hidden');
     document.getElementById('btnInstallPWA2')?.classList.add('hidden');
     UI.showToast('✅ FishMap muvaffaqiyatli o\'rnatildi!', 'success');
   });
@@ -78,7 +79,8 @@ const Profile = (() => {
     render(user);
 
     // Install tugmalari
-    document.getElementById('btnInstallPWA')?.addEventListener('click', triggerInstall);
+    // ⚠️ btnInstallPWA (yuqori o'ng burchakdagi eski tugma) vaqtinchalik o'chirilgan:
+    // document.getElementById('btnInstallPWA')?.addEventListener('click', triggerInstall);
     document.getElementById('btnInstallPWA2')?.addEventListener('click', triggerInstall);
 
     // Ulashish

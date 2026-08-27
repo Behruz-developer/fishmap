@@ -121,21 +121,24 @@ const Auth = (() => {
     document.getElementById('loginScreen').classList.add('hidden');
     document.getElementById('mainApp').classList.remove('hidden');
 
-    const avatar = document.getElementById('userAvatar');
-    if (user.user_metadata?.avatar_url) {
-      avatar.style.backgroundImage = `url(${user.user_metadata.avatar_url})`;
-      avatar.textContent = '';
-    } else {
-      const name = user.user_metadata?.full_name || user.email || '?';
-      avatar.textContent = name[0].toUpperCase();
-    }
-
-    avatar.onclick = async () => {
-      const name = user.user_metadata?.full_name || user.email;
-      if (confirm(`${name}\n\nDasturdan chiqmoqchimisiz?`)) {
-        await signOut();
-      }
-    };
+    // ⚠️ VAQTINCHALIK O'CHIRILDI: yuqori o'ng burchakdagi avatar DOMdan olib tashlangan
+    // (index.html'da izohda). Qayta yoqish uchun shu blokni ham tiking:
+    //
+    // const avatar = document.getElementById('userAvatar');
+    // if (user.user_metadata?.avatar_url) {
+    //   avatar.style.backgroundImage = `url(${user.user_metadata.avatar_url})`;
+    //   avatar.textContent = '';
+    // } else {
+    //   const name = user.user_metadata?.full_name || user.email || '?';
+    //   avatar.textContent = name[0].toUpperCase();
+    // }
+    //
+    // avatar.onclick = async () => {
+    //   const name = user.user_metadata?.full_name || user.email;
+    //   if (confirm(`${name}\n\nDasturdan chiqmoqchimisiz?`)) {
+    //     await signOut();
+    //   }
+    // };
   }
 
   return { init, signInWithGoogle, signOut, getUser, getClient, isAdmin,

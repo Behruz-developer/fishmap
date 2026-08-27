@@ -61,9 +61,13 @@
         Fish<span>Map</span>
       </div>
       <div class="header-actions">
-        <!-- PWA install button (hidden by default, shown when installable) -->
-        <button class="btn-icon hidden" id="btnInstallPWA" title="Ilovani o'rnatish" aria-label="Ilovani o'rnatish">⬇️</button>
-        <div class="user-avatar" id="userAvatar" title="Profil" role="button" tabindex="0" aria-label="Profil"></div>
+        <!-- ⚠️ VAQTINCHALIK O'CHIRILDI: yuqori o'ng burchakdagi "Ilovani o'rnatish" va profil avatar tugmalari.
+             "Ilovani o'rnatish" endi Profil bo'limida (btnInstallPWA2), avatar esa kerak emas
+             (profil pastdagi nav'da bor). Qayta yoqish uchun izohdan chiqaring va
+             auth.js (showMainApp) va profile.js'dagi izohlangan qatorlarni ham tiking:
+          <button class="btn-icon hidden" id="btnInstallPWA" title="Ilovani o'rnatish" aria-label="Ilovani o'rnatish">⬇️</button>
+          <div class="user-avatar" id="userAvatar" title="Profil" role="button" tabindex="0" aria-label="Profil"></div>
+          -->
       </div>
     </header>
 
