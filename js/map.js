@@ -129,21 +129,55 @@ const MapModule = (() => {
   }
 
 
+  let _userMarker = null;
+
   function goToLocation() {
     if (!navigator.geolocation) {
-      UI.showToast('Joylashuv aniqlanmadi', 'error');
+      UI.showToast('Brauzeringiz joylashuvni qo\'llab-quvvatlamaydi', 'error');
       return;
     }
+    UI.showToast('📍 Joylashuv aniqlanmoqda...', '');
+    _requestLocation({ enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }, false);
+  }
+
+  function _requestLocation(opts, isRetry) {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const coords = [pos.coords.latitude, pos.coords.longitude];
         Spots.setUserPosition(coords[0], coords[1]);
         if (_map) {
+          // Foydalanuvchi joylashuvini belgilaymiz
+          if (_userMarker) {
+            try { _map.geoObjects.remove(_userMarker); } catch (_) {}
+          }
+          try {
+            _userMarker = new ymaps.Placemark(coords, {
+              hintContent: 'Sizning joylashuvingiz',
+            }, {
+              preset: 'islands#blueDotIcon',
+              iconColor: '#14B8A6',
+            });
+            _map.geoObjects.add(_userMarker);
+          } catch (_) {}
           _map.setCenter(coords, 13);
+          // "Yaqin" filtriga joylashuv kelganini xabar qilamiz
           document.dispatchEvent(new CustomEvent('fishmap:location', { detail: coords }));
+          UI.showToast('✅ Joylashuvingiz topildi', 'success');
         }
       },
-      () => UI.showToast('Joylashuvga ruxsat bermadingiz', 'error'),
+      (err) => {
+        // Desktopda GPS bo'lmasa — aniq geolokatsiyasiz (IP asosida) qayta urinamiz
+        if (!isRetry && (err.code === err.POSITION_UNAVAILABLE || err.code === err.TIMEOUT)) {
+          _requestLocation({ enableHighAccuracy: false, timeout: 15000, maximumAge: 300000 }, true);
+          return;
+        }
+        if (err.code === err.PERMISSION_DENIED) {
+          UI.showToast('Joylashuvga ruxsat bermadingiz — brauzer sozlamalaridan yoqing', 'error');
+        } else {
+          UI.showToast('Joylashuvni olishningiz imkoni bo\'lmadi, yana urinib ko\'ring', 'error');
+        }
+      },
+      opts,
     );
   }
 

@@ -25,7 +25,17 @@ const Profile = (() => {
 
   async function triggerInstall() {
     if (!_deferredInstallPrompt) {
-      UI.showToast('Ilova allaqachon o\'rnatilgan yoki brauzer qo\'llab-quvvatlamaydi', '');
+      // beforeinstallprompt kelmaganda — iOS/Safari kabi brauzerlarda
+      // qo'lda o'rnatish yo'riqnomasini ko'rsatamiz
+      const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+      if (isStandalone) {
+        UI.showToast("Ilova allaqachon o'rnatilgan ✅", 'success');
+      } else if (isIOS) {
+        UI.showToast('📱 Safari pastidagi "Share" → "Add to Home Screen" bosing', '');
+      } else {
+        UI.showToast("Brauzer menysidan 'Ilovani o'rnatish / Add to Home Screen' tanlang", '');
+      }
       return;
     }
     _deferredInstallPrompt.prompt();
@@ -78,6 +88,9 @@ const Profile = (() => {
     const user = Auth.getUser();
     render(user);
 
+    // Install tugmasi — doim ko'rinadi (beforeinstallprompt kelmasa ham,
+    // bosilganda brauzerga qarab yo'riqnoma ko'rsatiladi)
+    document.getElementById('btnInstallPWA2')?.classList.remove('hidden');
     // Install tugmalari
     // ⚠️ btnInstallPWA (yuqori o'ng burchakdagi eski tugma) vaqtinchalik o'chirilgan:
     // document.getElementById('btnInstallPWA')?.addEventListener('click', triggerInstall);

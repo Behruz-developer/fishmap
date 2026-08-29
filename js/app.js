@@ -242,8 +242,20 @@ const App = (() => {
         document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
         chip.classList.add('active');
         _currentFilter.type = chip.dataset.filter;
+
+        // "Yaqin" filtrida joylashuv hali ma'lum bo'lmasa — GPS so'raymiz
+        if (chip.dataset.filter === 'near' && !Spots.hasUserPosition()) {
+          UI.showToast('📍 Sizga yaqin joylar uchun joylashuvingiz aniqlanmoqda...', '');
+          MapModule.goToLocation();
+        }
+
         applyFilter();
       });
+
+    // GPS topilganda — "Yaqin" filtr aktiv bo'lsa ro'yxatni yangilaymiz
+    document.addEventListener('fishmap:location', () => {
+      if (_currentFilter.type === 'near') applyFilter();
+    });
 
     // Spot kartochkalari: event delegation
     spotsRow.addEventListener('click', (e) => {
@@ -339,15 +351,6 @@ const App = (() => {
         UI.closeAddModal();
       } else if (!document.getElementById('guideModal').classList.contains('hidden')) {
         Guides.closeDetail();
-      }
-    });
-
-    // Filter chip "Do'konlar" → stores tabiga o'tish
-    document.getElementById('filterWrap')?.addEventListener('click', (e) => {
-      const chip = e.target.closest('.chip[data-filter="stores"]');
-      if (chip) {
-        // Xaritada do'konlarni ko'rsatish va stores tabiga o'tish
-        setTimeout(() => switchTab('stores'), 50);
       }
     });
   }

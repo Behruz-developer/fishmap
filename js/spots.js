@@ -169,7 +169,11 @@ const Spots = (() => {
     if (type === 'free')  result = result.filter(s => !s.is_paid);
     if (type === 'paid')  result = result.filter(s =>  s.is_paid);
     if (type === 'top')   result = result.filter(s =>  s.rating >= 4);
-    if (type === 'near')  result = result.filter(s => s._distanceKm != null);
+    if (type === 'near') {
+      // Joylashuv hali ma'lum bo'lmasa — hamma joyni ko'rsatamiz
+      // (keyinchalik GPS kelganda yaqinlik bo'yicha saralanadi)
+      if (_userPos) result = result.filter(s => s._distanceKm != null);
+    }
     if (type === 'sazan') result = result.filter(s => (s.fish_types || []).some(f => f.toLowerCase().includes('sazan')));
     if (type === 'zander')result = result.filter(s => (s.fish_types || []).some(f => f.toLowerCase().includes('zander') || f.toLowerCase().includes('sudak')));
     if (type === 'forel') result = result.filter(s => (s.fish_types || []).some(f => f.toLowerCase().includes('forel')));

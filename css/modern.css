@@ -82,15 +82,21 @@ body {
 
 .login-features { gap: 9px; margin-bottom: 28px; }
 
+/* Feature elementlari — oddiy ma'lumot qatorlari (tugma ko'rinmasin) */
 .feat-item {
-  background: linear-gradient(135deg, #E6F7F9 0%, #EAF5FD 100%);
-  border: 1px solid rgba(14,143,163,0.1);
+  background: #F4FAFB;
+  border: 1px solid rgba(14,143,163,0.08);
   border-radius: 14px;
   padding: 12px 14px;
   font-weight: 500;
-  transition: transform 0.15s;
+  color: var(--muted);
+  cursor: default;
+  user-select: none;
+  -webkit-user-select: none;
 }
-.feat-item:hover { transform: translateX(3px); }
+.feat-item:hover { transform: none; }
+.feat-item:active { transform: none; }
+.feat-item span { font-size: 18px; }
 
 .btn-google {
   border: 1.5px solid #E4EBEF;
@@ -163,11 +169,18 @@ body {
   box-shadow: 0 4px 14px rgba(20,184,166,0.35);
   transform: translateY(-1px);
 }
-.chip-store, .chip-store:hover, .chip-store.active {
+/* Do'konlar chipi — qolgan chip'lar kabi, aktiv holatda binafsha */
+.chip-store {
+  background: var(--surface);
+  border-color: #DCE9EE;
+  color: var(--store);
+}
+.chip-store.active, .chip-store:hover {
   background: var(--store);
   border-color: transparent;
   color: #fff;
   box-shadow: 0 4px 14px rgba(139,92,246,0.35);
+  transform: translateY(-1px);
 }
 
 /* ═══════════ MAP ═══════════ */
