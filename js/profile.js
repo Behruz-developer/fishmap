@@ -69,8 +69,8 @@ const Profile = (() => {
           <div class="ig-step"><span class="ig-num">2</span><div><b>"Ilovani o'rnatish"</b> yoki <b>"Add to Home screen"</b> ni tanlang</div></div>
         `}
         <div class="ig-actions">
-          <button type="button" class="ig-btn ig-btn-primary" id="igCopyLink">🔗 Havolani nusxalash</button>
-          <button type="button" class="ig-btn ig-btn-secondary" id="igClose">Tushunarli, yopish</button>
+          ${isTelegram ? `<button type="button" class="ig-btn ig-btn-primary" id="igCopyLink">🔗 Havolani nusxalash</button>` : ''}
+          <button type="button" class="ig-btn ${isTelegram ? 'ig-btn-secondary' : 'ig-btn-primary'}" id="igClose">Tushunarli, yopish</button>
         </div>
       </div>
     `;

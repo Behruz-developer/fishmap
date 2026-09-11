@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FishMap — Joylar qo'shish (seed)</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: linear-gradient(160deg, #062A3C 0%, #04212F 100%);
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px; color: #0F2027;
+    }
+    .card {
+      background: #fff; border-radius: 24px; padding: 32px 28px;
+      max-width: 560px; width: 100%;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.5);
+    }
+    h1 { font-size: 22px; font-weight: 800; letter-spacing: -0.4px; margin-bottom: 6px; }
+    .sub { font-size: 13px; color: #64818B; margin-bottom: 20px; line-height: 1.5; }
+    textarea {
+      width: 100%; height: 180px;
+      border: 1.5px solid #E2ECF0; border-radius: 14px;
+      padding: 12px 14px; font-size: 13px; font-family: 'SF Mono', Menlo, monospace;
+      resize: vertical; outline: none; margin-bottom: 8px;
+    }
+    textarea:focus { border-color: #14B8A6; box-shadow: 0 0 0 3px rgba(20,184,166,0.15); }
+    .hint { font-size: 11.5px; color: #64818B; margin-bottom: 16px; }
+    button {
+      width: 100%; padding: 14px; border: none; border-radius: 14px;
+      font-size: 14px; font-weight: 700; font-family: inherit; cursor: pointer;
+      transition: filter 0.15s; margin-bottom: 10px;
+    }
+    button:hover { filter: brightness(1.06); }
+    .btn-login { background: linear-gradient(135deg, #14B8A6, #0EA5E9); color: #fff; }
+    .btn-add { background: linear-gradient(135deg, #14B8A6, #0EA5E9); color: #fff; }
+    .btn-logout { background: #EEF3F5; color: #64818B; }
+    #status { font-size: 13px; line-height: 1.7; margin-top: 12px; white-space: pre-wrap; }
+    .ok { color: #10B981; font-weight: 600; }
+    .err { color: #EF4444; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>📍 FishMap — Joylar qo'shish</h1>
+    <p class="sub">Koordinatalarni har satrga bitta: <b>lat, lng</b> ko'rinishida yozing.<br>Nomlar Yandex Geocoder orqali avtomatik topiladi, hammasi <b>bepul</b> qilib qo'shiladi.</p>
+
+    <textarea id="coords" placeholder="41.5322, 69.9843&#10;41.4210, 69.7210&#10;40.9930, 71.4460"></textarea>
+    <p class="hint">Masalan: 41.5322, 69.9843 (har satrda bitta joy)</p>
+
+    <button class="btn-login" id="btnLogin">🔐 Admin bilan kirish (Google)</button>
+    <button class="btn-add" id="btnAdd" style="display:none">✅ Joyni qo'shish</button>
+    <button class="btn-logout" id="btnLogout" style="display:none">Chiqish</button>
+
+    <div id="status"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/seed.js"></script>
+</body>
+</html>

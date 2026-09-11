@@ -80,21 +80,21 @@ const UI = (() => {
       ${spot.is_hot ? '<span class="spot-badge badge-hot">🔥 Mashhur</span>' : ''}
     `;
 
-    const distTxt = spot._distanceKm != null ? Utils.formatDistance(spot._distanceKm) : '—';
-    document.getElementById('popupStats').innerHTML = `
+    // Statistika — faqat ma'lumoti bor maydonlar ko'rsatiladi
+    const stats = [];
+    if (isStore) {
+      stats.push({ val: "Do'kon", lbl: 'Tur' });
+    } else {
+      if (spot.depth) stats.push({ val: spot.depth, lbl: 'Chuqurlik' });
+      if (spot.type)  stats.push({ val: spot.type,  lbl: 'Tur' });
+      if (spot._distanceKm != null) stats.push({ val: Utils.formatDistance(spot._distanceKm), lbl: 'Masofa' });
+    }
+    document.getElementById('popupStats').innerHTML = stats.map(s => `
       <div class="stat-box">
-        <div class="stat-val">${esc(isStore ? '—' : spot.depth || '—')}</div>
-        <div class="stat-lbl">${isStore ? 'Do\'kon' : 'Chuqurlik'}</div>
+        <div class="stat-val">${esc(s.val)}</div>
+        <div class="stat-lbl">${esc(s.lbl)}</div>
       </div>
-      <div class="stat-box">
-        <div class="stat-val">${esc(spot.type)}</div>
-        <div class="stat-lbl">Tur</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-val">${esc(distTxt)}</div>
-        <div class="stat-lbl">Masofa</div>
-      </div>
-    `;
+    `).join('');
 
     const fish = spot.fish_types || [];
     const fishEl = document.getElementById('popupFish');
